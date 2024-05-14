@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Code Converter</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #FF5F6D, #FFC371); /* Gradient background */
+            font-family: 'Roboto', Arial, sans-serif; /* Professional font */
+            padding: 50px;
+            color: #333; /* Dark text color */
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #333; /* Dark text color */
+        }
+        .input-code, .output-code {
+            min-height: 200px;
+            border-radius: 10px;
+            border: 2px solid #FFD700; /* Golden border */
+            padding: 10px;
+            font-size: 16px;
+            background-color: #FFEF96; /* Light yellow background */
+        }
+        label {
+            font-weight: bold;
+            color: #333; /* Dark text color */
+        }
+        button.btn-primary {
+            background-color: #FFD700; /* Golden button */
+            border: none;
+            padding: 10px 20px;
+            color: #333; /* Dark text color */
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        button.btn-primary:hover {
+            background-color: #FFCC00; /* Darker shade of golden on hover */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Shadow effect */
+        }
+        .row {
+            margin-bottom: 20px;
+        }
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        .col-md-6 {
+            float: left;
+            width: 50%;
+        }
+        h4 {
+            margin-top: 0;
+            color: #333; /* Dark text color */
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Code Converter</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Input</h4>
+                <label for="input-language">Select Input Language:</label>
+                <select id="input-language" class="form-control">
+                    {% for language in languages %}
+                        <option value="{{ language }}">{{ language }}</option>
+                    {% endfor %}
+                </select>
+                <textarea id="input-code" class="form-control input-code mt-3" rows="10" placeholder="Enter your code here"></textarea>
+            </div>
+            <div class="col-md-6">
+                <h4>Output</h4>
+                <label for="output-language">Select Output Language:</label>
+                <select id="output-language" class="form-control">
+                    {% for language in languages2 %}
+                        <option value="{{ language }}">{{ language }}</option>
+                    {% endfor %}
+                </select>
+                <textarea id="output-code" class="form-control output-code mt-3" rows="10" readonly></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <button class="btn btn-primary" onclick="convertCode()">Convert</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function convertCode() {
+            let inputLanguage = document.getElementById('input-language').value;
+            let outputLanguage = document.getElementById('output-language').value;
+            let inputCode = document.getElementById('input-code').value;
+
+            fetch('/convert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `input-language=${inputLanguage}&output-language=${outputLanguage}&input-code=${encodeURIComponent(inputCode)}`
+            })
+            .then(response => response.text())
+            .then(outputCode => {
+                document.getElementById('output-code').value = outputCode;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
